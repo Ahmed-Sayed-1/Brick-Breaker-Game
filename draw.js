@@ -16,12 +16,13 @@ const ball = {
   y_axis: gameHeight - 30,
   ballRadius: 10,
 };
-
+const paddle = {
+  height: 10,
+  width: gameBorder.bottom * 0.15,
+  position: (gameBorder.bottom - this.width) / 2,
+};
 let xDirection = 1;
 let yDirection = -1;
-const paddleHeight = 10;
-const paddleWidth = gameWidth * 0.15;
-let paddleX = (gameWidth - paddleWidth) / 2;
 let rightPressed = false;
 let leftPressed = false;
 
@@ -33,24 +34,29 @@ function drawBall() {
   ctx.closePath();
 }
 
-function moveMouse(e) {
-  if (
-    e.clientX >= gameBorder.left &&
-    e.clientX <= gameWidth - paddleWidth &&
-    e.clientY >= gameBorder.right &&
-    e.clientY <= gameHeight
-  ) {
-    paddleX = e.clientX;
-  } else if (e.clientX > gameWidth - paddleWidth) {
-    paddleX = gameWidth - paddleWidth;
-  }
-}
 function drawPaddle() {
   ctx.beginPath();
-  ctx.rect(paddleX, gameHeight - paddleHeight, paddleWidth, paddleHeight);
+  ctx.rect(
+    paddle.position,
+    gameHeight - paddle.height,
+    paddle.width,
+    paddle.height
+  );
   ctx.fillStyle = "#0095DD";
   ctx.fill();
   ctx.closePath();
+}
+function moveMouse(e) {
+  if (
+    e.clientX >= gameBorder.left &&
+    e.clientX <= gameWidth - paddle.width &&
+    e.clientY >= gameBorder.right &&
+    e.clientY <= gameHeight
+  ) {
+    paddle.position = e.clientX;
+  } else if (e.clientX > gameWidth - paddle.width) {
+    paddle.position = gameWidth - paddle.width;
+  }
 }
 
 function handleDirection() {
@@ -65,9 +71,9 @@ function handleDirection() {
   }
 
   if (
-    ball.y_axis + yDirection > gameHeight - ball.ballRadius - paddleHeight &&
-    ball.x_axis > paddleX &&
-    ball.x_axis < paddleX + paddleWidth
+    ball.y_axis + yDirection > gameHeight - ball.ballRadius - paddle.height &&
+    ball.x_axis > paddle.position &&
+    ball.x_axis < paddle.position + paddle.width
   ) {
     yDirection = -yDirection;
   }
@@ -81,10 +87,10 @@ function draw() {
   drawBall();
   drawPaddle();
   handleDirection();
-  if (rightPressed && paddleX < gameWidth - paddleWidth) {
-    paddleX += 7;
-  } else if (leftPressed && paddleX > 0) {
-    paddleX -= 7;
+  if (rightPressed && paddle.position < gameWidth - paddle.width) {
+    paddle.position += 7;
+  } else if (leftPressed && paddle.position > 0) {
+    paddle.position -= 7;
   }
 }
 
