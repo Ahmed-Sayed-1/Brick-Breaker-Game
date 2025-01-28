@@ -1,22 +1,32 @@
-//Insert the containers
+//Insert canvas and append the blocks inside it
+import { Block } from "./Block.js";
+const blocks = [];
 function initializeContainers() {
-  // const mainContainer = document.querySelector(".main-container");
-  const subContainer = document.querySelector(".sub-container");
-  const randomNumberOfContainer = Math.floor(Math.random() * 3) + 4;
-  for (let i = 0; i < randomNumberOfContainer; i++) {
-    const subDiv = document.createElement("div");
-    subDiv.classList.add("containers");
-    subContainer.appendChild(subDiv);
-    //create array of gaps
-    const gaps = [0, 10, 20, 30, 40];
-    const randomIndex = Math.floor(Math.random() * gaps.length);
-    const gap = gaps[randomIndex];
-    const numberOfBlocks = subDiv.clientWidth / (75 + gap);
+  const canvas = document.querySelector("canvas");
+  const randomRows = Math.floor(Math.random() * 3) + 4;
+  const ctx = canvas.getContext("2d");
+  //Create the block objects and draw them to the page
+  const gaps = [5, 10, 15, 20, 25];
+  const randomIndex = Math.floor(Math.random() * gaps.length);
+  const gap = gaps[randomIndex];
+  const totalWidth = canvas.width;
+  let x = 20;
+  let y = 50;
+  const numberOfBlocks = totalWidth / (Block.width + gap);
+  for (let i = 0; i < randomRows; i++) {
+    const randomStart = [10, 20, 30, 50, 60, 70, 80];
+    const randomI = Math.floor(Math.random() * randomStart.length);
+    const randomBegin = randomStart[randomI];
+    x = randomBegin;
     for (let j = 0; j < numberOfBlocks; j++) {
-      const blocks = document.createElement("div");
-      blocks.classList.add("blocks");
-      subDiv.appendChild(blocks);
+      x += Block.width + gap;
+      if (x + Block.width + gap > totalWidth) break;
+      const block = new Block(x, y);
+      blocks.push(block);
+      block.drawBlock(ctx);
     }
+    console.log(x);
+    y += Block.height + gap;
   }
 }
 
