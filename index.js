@@ -1,7 +1,10 @@
 const blocks = [
-  { x: 50, y: 50, width: 20, height: 10, visible: true },
-  { x: 150, y: 50, width: 20, height: 10, visible: true },
+  { x: 50, y: 50, width: 20, height: 10, visible: 2 },
+  { x: 200, y: 180, width: 70, height: 10, visible: 2 },
+  { x: 100, y: 200, width: 50, height: 10, visible: 2 },
+  { x: 100, y: 100, width: 50, height: 10, visible: 2 },
 ];
+let visibleTrigger = true;
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 document.addEventListener("mousemove", moveMouse);
@@ -16,8 +19,8 @@ const gameBorder = {
   right: gameWidth,
 };
 const ball = {
-  x_axis: gameWidth / 2,
-  y_axis: gameHeight - 30,
+  x: gameWidth / 2,
+  y: gameHeight - 30,
   ballRadius: 10,
 };
 
@@ -33,7 +36,7 @@ let leftPressed = false;
 
 function drawBall() {
   ctx.beginPath();
-  ctx.arc(ball.x_axis, ball.y_axis, ball.ballRadius, 0, Math.PI * 2);
+  ctx.arc(ball.x, ball.y, ball.ballRadius, 0, Math.PI * 2);
   ctx.fillStyle = "#0095DD";
   ctx.fill();
   ctx.closePath();
@@ -56,7 +59,7 @@ function moveMouse(e) {
   if (
     e.clientX >= gameBorder.left &&
     e.clientX <= gameWidth - paddle.width &&
-    e.clientY >= gameBorder.bottom && //////////
+    e.clientY >= gameBorder.bottom &&
     e.clientY <= gameHeight
   ) {
     paddle.position = e.clientX;
@@ -67,42 +70,48 @@ function moveMouse(e) {
 
 function handleDirection() {
   if (
-    ball.x_axis + xDirection > gameWidth - ball.ballRadius ||
-    ball.x_axis + xDirection < ball.ballRadius
+    ball.x + xDirection > gameWidth - ball.ballRadius ||
+    ball.x + xDirection < ball.ballRadius
   ) {
     xDirection = -xDirection;
   }
-  if (ball.y_axis + yDirection < ball.ballRadius) {
+  if (ball.y + yDirection < ball.ballRadius) {
     yDirection = -yDirection;
   }
 
   if (
-    ball.y_axis + yDirection > gameHeight - ball.ballRadius - paddle.height &&
-    ball.x_axis > paddle.position &&
-    ball.x_axis < paddle.position + paddle.width
+    ball.y + yDirection > gameHeight - ball.ballRadius - paddle.height &&
+    ball.x > paddle.position &&
+    ball.x < paddle.position + paddle.width
   ) {
     yDirection = -yDirection;
   }
   blockCollisions();
-  ball.x_axis += xDirection;
-  ball.y_axis += yDirection;
+  ball.x += xDirection;
+  ball.y += yDirection;
 }
-function blockCollisions(){
-  blocks.forEach(block => {
+function blockCollisions() {
+  blocks.forEach((block) => {
     if (
       block.visible &&
-      ball.x_axis + ball.ballRadius > block.x &&
-      ball.x_axis - ball.ballRadius < block.x + block.width &&
-      ball.y_axis + ball.ballRadius > block.y &&
-      ball.y_axis - ball.ballRadius < block.y + block.height
+      ball.x + ball.ballRadius > block.x &&
+      ball.x - ball.ballRadius < block.x + block.width &&
+      ball.y + ball.ballRadius > block.y &&
+      ball.y - ball.ballRadius < block.y + block.height
     ) {
-      block.visible = false;
-      yDirection = -yDirection; 
+      if (visibleTrigger == true) {
+        visibleTrigger = false;
+        setTimeout(() => {
+          block.visible--;
+          visibleTrigger = true;
+          removeBlock();
+        }, "80");
+      }
+      yDirection = -yDirection;
     }
   });
-  removeBlock();
 }
-function removeBlock(){
+function removeBlock() {
   for (let i = blocks.length - 1; i >= 0; i--) {
     if (!blocks[i].visible) {
       blocks.splice(i, 1);
@@ -110,7 +119,7 @@ function removeBlock(){
   }
 }
 function drawBlocks() {
-  blocks.forEach(block => {
+  blocks.forEach((block) => {
     if (block.visible) {
       ctx.beginPath();
       ctx.rect(block.x, block.y, block.width, block.height);
@@ -125,7 +134,7 @@ function draw() {
   ctx.clearRect(0, 0, gameWidth, gameHeight);
   drawBall();
   drawPaddle();
-  drawBlocks(); 
+  drawBlocks();
   handleDirection();
   if (rightPressed && paddle.position < gameWidth - paddle.width) {
     paddle.position += 7;
