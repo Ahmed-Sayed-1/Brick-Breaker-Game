@@ -1,12 +1,9 @@
-const blocks = [
-  { x: 50, y: 50, width: 20, height: 10, visible: 2 },
-  { x: 200, y: 180, width: 70, height: 10, visible: 2 },
-  { x: 100, y: 200, width: 50, height: 10, visible: 2 },
-  { x: 100, y: 100, width: 50, height: 10, visible: 2 },
-];
+import { initializeContainers } from "./script.js";
+import { Block } from "./Block.js";
 let visibleTrigger = true;
 const canvas = document.getElementById("myCanvas");
-const ctx = canvas.getContext("2d");
+export const ctx = canvas.getContext("2d");
+const blocks = initializeContainers();
 document.addEventListener("mousemove", moveMouse);
 document.addEventListener("keydown", keyDownHandler);
 document.addEventListener("keyup", keyUpHandler);
@@ -95,9 +92,9 @@ function blockCollisions() {
     if (
       block.visible &&
       ball.x + ball.ballRadius > block.x &&
-      ball.x - ball.ballRadius < block.x + block.width &&
+      ball.x - ball.ballRadius < block.x + Block.blockWidth &&
       ball.y + ball.ballRadius > block.y &&
-      ball.y - ball.ballRadius < block.y + block.height
+      ball.y - ball.ballRadius < block.y + Block.blockHeight
     ) {
       if (visibleTrigger == true) {
         visibleTrigger = false;
@@ -122,7 +119,7 @@ function drawBlocks() {
   blocks.forEach((block) => {
     if (block.visible) {
       ctx.beginPath();
-      ctx.rect(block.x, block.y, block.width, block.height);
+      ctx.rect(block.x, block.y, Block.blockWidth, Block.blockHeight);
       ctx.fillStyle = "#0095DD";
       ctx.fill();
       ctx.closePath();
