@@ -18,13 +18,13 @@ const gameBorder = {
 const ball = {
   x: gameWidth / 2,
   y: gameHeight - 30,
-  ballRadius: 10,
+  ballRadius: 7.5,
 };
 
 const paddle = {
   height: 10,
   width: gameBorder.right * 0.15,
-  position: (gameBorder.right - this.width) / 2,
+  position: (gameBorder.right - gameBorder.right * 0.15) / 2,
 };
 let xDirection = 1;
 let yDirection = -1;
@@ -66,27 +66,36 @@ function moveMouse(e) {
 }
 
 function handleDirection() {
-  if (
-    ball.x + xDirection > gameWidth - ball.ballRadius ||
-    ball.x + xDirection < ball.ballRadius
-  ) {
+  if (ball.x + xDirection > gameWidth - ball.ballRadius || ball.x + xDirection < ball.ballRadius) {
     xDirection = -xDirection;
   }
+
   if (ball.y + yDirection < ball.ballRadius) {
     yDirection = -yDirection;
   }
 
   if (
-    ball.y + yDirection > gameHeight - ball.ballRadius - paddle.height &&
-    ball.x > paddle.position &&
+    ball.y > gameHeight - ball.ballRadius - paddle.height && 
+    ball.y < gameHeight - paddle.height && 
+    ball.x > paddle.position && 
     ball.x < paddle.position + paddle.width
   ) {
-    yDirection = -yDirection;
+    ball.y = gameHeight - ball.ballRadius - paddle.height; 
+    let newX = ball.x - (paddle.position + paddle.width / 2);
+    let Intersect = newX / (paddle.width / 2);
+    let Angle = Intersect * (Math.PI / 3); 
+
+    xDirection = Math.sin(Angle);
+    yDirection = -Math.cos(Angle);
   }
+
   blockCollisions();
-  ball.x += xDirection;
-  ball.y += yDirection;
+  
+  let speed = 2; 
+  ball.x += xDirection * speed;
+  ball.y += yDirection * speed;
 }
+
 function blockCollisions() {
   blocks.forEach((block) => {
     if (
@@ -96,21 +105,25 @@ function blockCollisions() {
       ball.y + ball.ballRadius > block.y &&
       ball.y - ball.ballRadius < block.y + Block.blockHeight
     ) {
-      if (visibleTrigger == true) {
-        visibleTrigger = false;
-        setTimeout(() => {
-          block.visible--;
-          visibleTrigger = true;
-          removeBlock();
-        }, "80");
+      let hitFromLeft = ball.x - ball.ballRadius < block.x;
+      let hitFromRight = ball.x + ball.ballRadius > block.x + Block.blockWidth;
+      let hitFromTop = ball.y - ball.ballRadius < block.y;
+      let hitFromBottom = ball.y + ball.ballRadius > block.y + Block.blockHeight;
+
+      if (hitFromLeft || hitFromRight) {
+        xDirection = -xDirection;
+      } 
+      if (hitFromTop || hitFromBottom) {
+        yDirection = -yDirection;
       }
-      yDirection = -yDirection;
+      block.visible--;
+      removeBlock();       
     }
   });
 }
 function removeBlock() {
   for (let i = blocks.length - 1; i >= 0; i--) {
-    if (!blocks[i].visible) {
+    if (blocks[i].visible==0) {
       blocks.splice(i, 1);
     }
   }
@@ -141,8 +154,13 @@ function draw() {
 }
 
 function startGame() {
-  setInterval(draw, 10);
+  function gameLoop() {
+    draw();
+    requestAnimationFrame(gameLoop);
+  }
+  gameLoop();
 }
+
 
 function keyDownHandler(e) {
   if (e.key === "ArrowRight") {
