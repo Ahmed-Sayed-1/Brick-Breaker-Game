@@ -1,0 +1,25 @@
+.game-canvas {
+  width: 100vw;  
+  height: 100vh; 
+  display: flex;
+  justify-content: center; /* Centers the canvas horizontally */
+  align-items: center; /* Centers the canvas vertically */
+  
+}
+
+button {
+    display: block;
+    background-color: brown;
+  }
+
+body {
+    background-image: url("/assets/images/game-background.jpg"); 
+    background-size: cover; 
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+.test{
+  background-color: black;
+
+}
+  
