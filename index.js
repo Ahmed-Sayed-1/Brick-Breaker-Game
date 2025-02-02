@@ -1,11 +1,9 @@
 const blocks = [];
 const blockWidth = 100; 
 const blockHeight = 50;
-const spacing = 10; 
+const spacing = 5; 
 
-
-
-
+let currentBrickId = 0;
 
 const canvas = document.querySelector('.game-canvas');
 const ctx = canvas.getContext("2d");
@@ -19,9 +17,9 @@ canvas.height = canvas.offsetHeight;
 const gameWidth = canvas.width;
 const gameHeight = canvas.height;
 
-// Calculate number of columns dynamically
+
 const colCount = Math.floor(gameWidth / (blockWidth + spacing));
-const rowCount = 5; // Keep it fixed or make it dynamic
+const rowCount = 5; 
 
 for (let row = 0; row < rowCount; row++) {
   for (let col = 0; col < colCount; col++) {
@@ -32,7 +30,7 @@ for (let row = 0; row < rowCount; row++) {
       height: blockHeight,
       visible: true,
       cracked:false,
-      brickId:0,
+      brickId:currentBrickId++,
     });
   }
 }
@@ -52,7 +50,7 @@ const ball = {
 };
 
 const paddle = {
-  height: 10,
+  height: 30,
   width: gameBorder.right * 0.15,
   position: (gameBorder.right - this.width) / 2,
 };
@@ -66,25 +64,6 @@ const ballImage = new Image();
 ballImage.src= '/assets/images/ball-image-2.png'
 
 
-// function drawBall() {
-//   ctx.beginPath();
-//   ctx.arc(ball.x_axis, ball.y_axis, ball.ballRadius, 0, Math.PI * 2);
-//   ctx.fillStyle = "#0095DD";
-//   ctx.fill();
-//   ctx.closePath();
-// }
-// ballImage.onload = () => {
-//   // Create a canvas element
-//   const canvas = document.createElement('canvas');
-//   document.body.appendChild(canvas);
-//   const ctx = canvas.getContext('2d');
-
-  
-//   canvas.width = 50; 
-//   canvas.height = 60; 
-
-//   ctx.drawImage(ballImage, 0, 0, 50, 60);
-// };
 let angle = 0;  
 let rotationSpeed = 0.005;  
 
@@ -112,16 +91,49 @@ function animateBall() {
  
 
 function drawPaddle() {
+  let radius = 10;
+
   ctx.beginPath();
-  ctx.rect(
+  ctx.moveTo(paddle.position + radius, gameHeight - paddle.height);
+  
+
+  ctx.arcTo( // top-right corner
+    paddle.position + paddle.width,
+    gameHeight - paddle.height,
+    paddle.position + paddle.width,
+    gameHeight,
+    radius
+  );
+
+ 
+  ctx.arcTo( //bottom-right corner
+    paddle.position + paddle.width,
+    gameHeight,
+    paddle.position,
+    gameHeight,
+    radius
+  );
+
+  ctx.arcTo( //bottom-left corner
+    paddle.position,
+    gameHeight,
     paddle.position,
     gameHeight - paddle.height,
-    paddle.width,
-    paddle.height
+    radius
   );
-  ctx.fillStyle = "#0095DD";
-  ctx.fill();
+
+
+  ctx.arcTo( //top-left corner
+    paddle.position,
+    gameHeight - paddle.height,
+    paddle.position + paddle.width,
+    gameHeight - paddle.height,
+    radius
+  );
+
   ctx.closePath();
+  ctx.fillStyle = "#373D42"; 
+  ctx.fill();
 }
 ``;
 function moveMouse(e) {
@@ -187,10 +199,10 @@ const crackedBlockImage = new Image();
 crackedBlockImage.src = '/assets/images/cracked-block-image.jpg'
 function drawCrackedBlock(block) {
       ctx.save();
-      ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-      ctx.shadowBlur = 10;
-      ctx.shadowOffsetX = 5;
-      ctx.shadowOffsetY = 5;
+      ctx.shadowColor = 'rgba(0, 0, 0, 1)';
+      ctx.shadowBlur = 30;
+      ctx.shadowOffsetX = 10;
+      ctx.shadowOffsetY = 10;
       ctx.beginPath();
       ctx.drawImage(crackedBlockImage,block.x, block.y, block.width, block.height);
       ctx.closePath();
@@ -221,6 +233,9 @@ function drawBlocks() {
       } else {
         ctx.drawImage(blockImage, block.x, block.y, block.width, block.height);
       }
+      ctx.lineWidth = 2;  
+      ctx.strokeStyle = '#373D42';  
+      ctx.strokeRect(block.x, block.y, block.width, block.height); 
       ctx.closePath();
       ctx.restore();
     }
