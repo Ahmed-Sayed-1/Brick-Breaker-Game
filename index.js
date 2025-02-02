@@ -46,7 +46,7 @@ const gameBorder = {
 const ball = {
   x_axis: gameWidth / 2,
   y_axis: gameHeight - 30,
-  ballRadius: 10,
+  ballRadius: 30,
 };
 
 const paddle = {
@@ -59,13 +59,55 @@ let yDirection = -1;
 let rightPressed = false;
 let leftPressed = false;
 
+const ballImage = new Image();
+
+ballImage.src= '/assets/images/ball-image-2.png'
+
+
+// function drawBall() {
+//   ctx.beginPath();
+//   ctx.arc(ball.x_axis, ball.y_axis, ball.ballRadius, 0, Math.PI * 2);
+//   ctx.fillStyle = "#0095DD";
+//   ctx.fill();
+//   ctx.closePath();
+// }
+// ballImage.onload = () => {
+//   // Create a canvas element
+//   const canvas = document.createElement('canvas');
+//   document.body.appendChild(canvas);
+//   const ctx = canvas.getContext('2d');
+
+  
+//   canvas.width = 50; 
+//   canvas.height = 60; 
+
+//   ctx.drawImage(ballImage, 0, 0, 50, 60);
+// };
+let angle = 0;  
+let rotationSpeed = 0.005;  
+
 function drawBall() {
-  ctx.beginPath();
-  ctx.arc(ball.x_axis, ball.y_axis, ball.ballRadius, 0, Math.PI * 2);
-  ctx.fillStyle = "#0095DD";
-  ctx.fill();
-  ctx.closePath();
+    ctx.save();   
+    ctx.translate(ball.x_axis, ball.y_axis);
+    ctx.rotate(angle);
+
+    
+    ctx.drawImage(ballImage, -ball.ballRadius, -ball.ballRadius, ball.ballRadius * 2, ball.ballRadius * 2);
+
+    ctx.restore(); 
+
+    angle += rotationSpeed;
+    if (angle >= 2 * Math.PI) {
+        angle = 0;  
+    }
 }
+
+function animateBall() {
+  drawBall();  
+  requestAnimationFrame(animateBall);  
+}
+
+ 
 
 function drawPaddle() {
   ctx.beginPath();
@@ -139,13 +181,13 @@ function removeBlock(){
     }
   }
 }
+const blockImage = new Image();
+blockImage.src = '/assets/images/block-image.jpg'
 function drawBlocks() {
   blocks.forEach(block => {
     if (block.visible) {
       ctx.beginPath();
-      ctx.rect(block.x, block.y, block.width, block.height);
-      ctx.fillStyle = "#8c513e";
-      ctx.fill();
+      ctx.drawImage(blockImage,block.x, block.y, block.width, block.height);
       ctx.closePath();
     }
   });
@@ -153,7 +195,8 @@ function drawBlocks() {
 
 function draw() {
   ctx.clearRect(0, 0, gameWidth, gameHeight);
-  drawBall();
+  //drawBall();
+  animateBall(); 
   drawPaddle();
   drawBlocks(); 
   handleDirection();
