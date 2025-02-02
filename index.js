@@ -2,28 +2,29 @@ import { initializeContainers } from "./script.js";
 import { Block } from "./Block.js";
 import { Ball } from "./Ball.js";
 import { Paddle } from "./Paddle.js";
-let visibleTrigger = true;
-const canvas = document.getElementById("myCanvas");
+const canvas = document.querySelector('.game-canvas');
 export const ctx = canvas.getContext("2d");
-const blocks = initializeContainers();
+canvas.width = canvas.offsetWidth;  
+canvas.height = canvas.offsetHeight;
+const gameWidth = canvas.width;
+console.log(gameWidth);
+export const blockWidth = 100; 
+export const blockHeight = 50;
+let blocks = initializeContainers(gameWidth, blockWidth, blockHeight);
 document.addEventListener("mousemove", moveMouse);
 document.addEventListener("keydown", keyDownHandler);
 document.addEventListener("keyup", keyUpHandler);
-const gameWidth = canvas.width;
-export const gameHeight = canvas.height;
-const ball = new Ball(gameWidth / 2, gameHeight - 30, 7.5);
-function drawPaddleSkin() {
-  const img = new Image();
-  img.onload = () => {
-    for (let i = 0; i < 4; i++) {
-      for (let j = 0; j < 3; j++) {
-        ctx.drawImage(img, j * 50, i * 38, 50, 38);
-      }
-    }
-  };
-  img.src = "https://mdn.github.io/shared-assets/images/examples/rhino.jpg";
-}
 
+export const gameHeight = canvas.height;
+console.log(gameHeight)
+const ball = new Ball(gameWidth / 2, gameHeight - 30, 7.5)
+
+canvas.width = canvas.offsetWidth;
+canvas.height = canvas.offsetHeight;
+
+const block = new Block();
+
+console.log(blocks);
 const gameBorder = {
   left: 0,
   bottom: 0,
@@ -32,7 +33,7 @@ const gameBorder = {
 };
 
 const paddle = new Paddle(
-  10,
+  20,
   gameBorder.right * 0.15,
   (gameBorder.right - gameBorder.right * 0.15) / 2
 );
@@ -109,7 +110,12 @@ function blockCollisions() {
       if (hitFromTop || hitFromBottom) {
         yDirection = -yDirection;
       }
-      block.visible--;
+      if (!block.cracked)
+      {
+        block.cracked=true;
+      }
+        block.visible--;
+      
       removeBlock();
     }
   });
@@ -121,32 +127,15 @@ function removeBlock() {
     }
   }
 }
-function drawBlocks() {
-  blocks.forEach((block) => {
-    if (block.visible != 0) {
-      ctx.beginPath();
-      ctx.rect(block.x, block.y, Block.blockWidth, Block.blockHeight);
 
-      if (block.visible == 2) {
-        ctx.fillStyle = "#0095DD";
-      } else if (block.visible == 1) {
-        ctx.fillStyle = "#FFFFFF";
-      } else {
-        ctx.fillStyle = "#252525";
-      }
-      ctx.fill();
-      ctx.closePath();
-    }
-  });
-}
+
 
 function draw() {
   ctx.clearRect(0, 0, gameWidth, gameHeight);
   ball.drawBall(ctx);
   paddle.drawPaddle(ctx);
-  drawBlocks();
+  block.drawBlocks(blocks, ctx);
   handleDirection();
-  drawPaddleSkin();
   if (rightPressed && paddle.position < gameWidth - paddle.width) {
     paddle.position += 7;
   } else if (leftPressed && paddle.position > 0) {

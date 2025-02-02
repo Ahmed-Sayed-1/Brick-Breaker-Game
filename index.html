@@ -1,18 +1,18 @@
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Document</title>
-  <!-- <link rel="style.css" href="style.css"> -->
-</head>
-
-<body>
-  <div>
-    <canvas id="myCanvas" style="background-color: aqua" width="480" height="320"></canvas>
-  </div>
-  <button id="runButton">Start game</button>
-  <script type="module" src="index.js"></script>
-</body>
-
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css"> 
+  </head>
+  <body>
+    <div class="game-container">
+      <canvas
+        id="myCanvas"
+        class="game-canvas"
+      ></canvas>
+    </div>
+    <button id="runButton" class="start-button">Start game</button>
+    <script src="index.js" type="module"></script>
+  </body>
 </html>
