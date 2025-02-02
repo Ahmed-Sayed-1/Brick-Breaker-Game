@@ -30,7 +30,9 @@ for (let row = 0; row < rowCount; row++) {
       y: row * (blockHeight + spacing),
       width: blockWidth,
       height: blockHeight,
-      visible: true
+      visible: true,
+      cracked:false,
+      brickId:0,
     });
   }
 }
@@ -168,12 +170,34 @@ function blockCollisions(){
       ball.y_axis + ball.ballRadius > block.y &&
       ball.y_axis - ball.ballRadius < block.y + block.height
     ) {
-      block.visible = false;
+      if(!block.cracked)
+        {
+          block.cracked = true;
+          drawCrackedBlock(block);
+        }else{
+          block.visible = false;
+        } 
       yDirection = -yDirection; 
     }
   });
   removeBlock();
 }
+
+const crackedBlockImage = new Image();
+crackedBlockImage.src = '/assets/images/cracked-block-image.jpg'
+function drawCrackedBlock(block) {
+      ctx.save();
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+      ctx.shadowBlur = 10;
+      ctx.shadowOffsetX = 5;
+      ctx.shadowOffsetY = 5;
+      ctx.beginPath();
+      ctx.drawImage(crackedBlockImage,block.x, block.y, block.width, block.height);
+      ctx.closePath();
+      ctx.restore();
+    }
+   
+
 function removeBlock(){
   for (let i = blocks.length - 1; i >= 0; i--) {
     if (!blocks[i].visible) {
@@ -186,16 +210,25 @@ blockImage.src = '/assets/images/block-image.jpg'
 function drawBlocks() {
   blocks.forEach(block => {
     if (block.visible) {
+      ctx.save();
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+      ctx.shadowBlur = 10;
+      ctx.shadowOffsetX = 5;
+      ctx.shadowOffsetY = 5;
       ctx.beginPath();
-      ctx.drawImage(blockImage,block.x, block.y, block.width, block.height);
+      if (block.cracked) {
+        ctx.drawImage(crackedBlockImage, block.x, block.y, block.width, block.height);
+      } else {
+        ctx.drawImage(blockImage, block.x, block.y, block.width, block.height);
+      }
       ctx.closePath();
+      ctx.restore();
     }
   });
 }
 
 function draw() {
   ctx.clearRect(0, 0, gameWidth, gameHeight);
-  //drawBall();
   animateBall(); 
   drawPaddle();
   drawBlocks(); 
