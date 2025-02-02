@@ -12,6 +12,17 @@ document.addEventListener("keyup", keyUpHandler);
 const gameWidth = canvas.width;
 export const gameHeight = canvas.height;
 const ball = new Ball(gameWidth / 2, gameHeight - 30, 7.5);
+function drawPaddleSkin() {
+  const img = new Image();
+  img.onload = () => {
+    for (let i = 0; i < 4; i++) {
+      for (let j = 0; j < 3; j++) {
+        ctx.drawImage(img, j * 50, i * 38, 50, 38);
+      }
+    }
+  };
+  img.src = "https://mdn.github.io/shared-assets/images/examples/rhino.jpg";
+}
 
 const gameBorder = {
   left: 0,
@@ -112,10 +123,17 @@ function removeBlock() {
 }
 function drawBlocks() {
   blocks.forEach((block) => {
-    if (block.visible) {
+    if (block.visible != 0) {
       ctx.beginPath();
       ctx.rect(block.x, block.y, Block.blockWidth, Block.blockHeight);
-      ctx.fillStyle = "#0095DD";
+
+      if (block.visible == 2) {
+        ctx.fillStyle = "#0095DD";
+      } else if (block.visible == 1) {
+        ctx.fillStyle = "#FFFFFF";
+      } else {
+        ctx.fillStyle = "#252525";
+      }
       ctx.fill();
       ctx.closePath();
     }
@@ -128,6 +146,7 @@ function draw() {
   paddle.drawPaddle(ctx);
   drawBlocks();
   handleDirection();
+  drawPaddleSkin();
   if (rightPressed && paddle.position < gameWidth - paddle.width) {
     paddle.position += 7;
   } else if (leftPressed && paddle.position > 0) {

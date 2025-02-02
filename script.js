@@ -19,6 +19,10 @@ export function initializeContainers() {
       x += Block.blockWidth + gap;
       if (x + Block.blockWidth + gap > totalWidth) break;
       const block = new Block(x, y);
+      if (Math.random() > 0.85) {
+        block.visible = -1;
+      }
+
       blocks2.push(block);
     }
     y += Block.blockHeight + gap;

@@ -10,7 +10,14 @@ export class Block {
   }
 
   drawBlock(ctx) {
-    ctx.fillStyle = "#0095DD";
+    if (this.visible == 2) {
+      ctx.fillStyle = "#0095DD";
+    } else if (this.visible == 1) {
+      ctx.fillStyle = "#FFFFFF";
+    } else {
+      ctx.fillStyle = "#252525";
+    }
+
     ctx.fillRect(this.x, this.y, Block.blockWidth, Block.blockHeight);
   }
 }
