@@ -1,9 +1,8 @@
+
 const blocks = [];
 const blockWidth = 100; 
 const blockHeight = 50;
 const spacing = 5; 
-
-let currentBrickId = 0;
 
 const canvas = document.querySelector('.game-canvas');
 const ctx = canvas.getContext("2d");
@@ -30,10 +29,22 @@ for (let row = 0; row < rowCount; row++) {
       height: blockHeight,
       visible: true,
       cracked:false,
-      brickId:currentBrickId++,
+      inLevel:0,
     });
   }
 }
+
+const mediumLevel = Array.from({ length: rowCount }, (_, rowIndex) => {
+  return Array.from({ length: colCount }, (_, colIndex) => {
+    // First & last column of the first and last rows should be 0
+    if ((rowIndex === 0 || rowIndex === rowCount - 1) && 
+        (colIndex === 0 || colIndex === colCount - 1)) {
+      return 0;
+    }
+    return 1;  // Fill all other spots with blocks
+  });
+});
+
 
 
 
@@ -82,6 +93,20 @@ function drawBall() {
         angle = 0;  
     }
 }
+
+function setMediumLevel() {
+  let levelIndex = 0;
+  for (let row = 0; row < mediumLevel.length; row++) {
+    for (let col = 0; col < mediumLevel[row].length; col++) {
+      if (levelIndex < blocks.length) {
+        blocks[levelIndex].inLevel = mediumLevel[row][col];
+        blocks[levelIndex].visible = mediumLevel[row][col] === 1;
+      }
+      levelIndex++;
+    }
+  }
+}
+setMediumLevel();
 
 function animateBall() {
   drawBall();  
@@ -221,7 +246,7 @@ const blockImage = new Image();
 blockImage.src = '/assets/images/block-image.jpg'
 function drawBlocks() {
   blocks.forEach(block => {
-    if (block.visible) {
+    if (block.visible && block.inLevel) {
       ctx.save();
       ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
       ctx.shadowBlur = 10;
