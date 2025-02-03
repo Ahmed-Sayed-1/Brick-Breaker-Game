@@ -81,6 +81,15 @@ function handleDirection() {
     yDirection = -Math.cos(Angle);
   }
 
+  if (ball.y + ball.ballRadius > canvas.height) {
+    ball.y = gameHeight - ball.ballRadius;
+    decreaseLives();
+    ball.x = gameWidth / 2;
+    ball.y = gameHeight - 30;
+    xDirection = 1;
+    yDirection = -1;
+  }
+
   blockCollisions();
 
   ball.x += xDirection * speed;
@@ -120,10 +129,28 @@ function blockCollisions() {
     }
   });
 }
+let countOfBroken = 0;
 function removeBlock() {
   for (let i = blocks.length - 1; i >= 0; i--) {
     if (blocks[i].visible == 0) {
       blocks.splice(i, 1);
+      increaseScore();
+      countOfBroken++;
+      console.log(countOfBroken);
+    }
+    if (countOfBroken === 1) {
+      const lives = document.getElementById("lives");
+      lives.innerHTML = parseInt(lives.innerHTML) + 1;
+      const result = document.querySelector(".status-container");
+      const congratulationDiv = document.createElement("div");
+      congratulationDiv.classList.add("congratulation");
+      congratulationDiv.innerHTML =
+        "Congratulations! You have earned an extra life!";
+      result.appendChild(congratulationDiv);
+      setTimeout(() => {
+        result.removeChild(congratulationDiv);
+      }, 3000);
+      countOfBroken = 0;
     }
   }
 }
@@ -200,3 +227,17 @@ window.createScoreAndLives = function () {
   statusContainer.appendChild(lives);
   document.body.appendChild(statusContainer);
 };
+
+function increaseScore() {
+  const score = document.getElementById("score");
+  score.innerHTML = parseInt(score.innerHTML) + 500;
+}
+
+function decreaseLives() {
+  const lives = document.getElementById("lives");
+  if (parseInt(lives.innerHTML) === 1) {
+    alert("Game Over!");
+    location.reload();
+  }
+  lives.innerHTML = parseInt(lives.innerHTML) - 1;
+}
