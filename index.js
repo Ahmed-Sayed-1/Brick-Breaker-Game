@@ -3,6 +3,7 @@ import { Block } from "./Block.js";
 import { Ball } from "./Ball.js";
 import { Paddle } from "./Paddle.js";
 const canvas = document.querySelector('.game-canvas');
+const hitSound = document.getElementById("hit-sound");
 export const ctx = canvas.getContext("2d");
 canvas.width = canvas.offsetWidth;  
 canvas.height = canvas.offsetHeight;
@@ -89,6 +90,7 @@ function handleDirection() {
 }
 
 function blockCollisions() {
+  //
   blocks.forEach((block) => {
     if (
       block.visible &&
@@ -97,6 +99,7 @@ function blockCollisions() {
       ball.y + ball.ballRadius > block.y &&
       ball.y - ball.ballRadius < block.y + Block.blockHeight
     ) {
+      playSound(hitSound);
       let hitFromLeft = ball.x - ball.ballRadius < block.x;
       let hitFromRight = ball.x + ball.ballRadius > block.x + Block.blockWidth;
       let hitFromTop = ball.y - ball.ballRadius < block.y;
@@ -142,8 +145,11 @@ function draw() {
   }
 }
 
+const mainAudio = document.getElementById("main-audio");
 function startGame() {
-  function gameLoop() {
+  mainAudio.play();
+  mainAudio.currentTime = 0;  
+  function gameLoop() { 
     draw();
     requestAnimationFrame(gameLoop);
   }
@@ -166,8 +172,22 @@ function keyUpHandler(e) {
   }
 }
 window.setDifficulty = function(level) {
+  //mainAudio.play();
+  //mainAudio.currentTime = 0; 
   document.getElementById("buttonContainer").remove();
   speed = level;
   startGame();
   this.disabled = true;
+
 };
+window.onload = function() {
+  mainAudio.play().catch((error) => {
+    console.log("Audio play blocked. Please interact with the page to allow audio.");
+  });
+};
+
+function playSound(sound) {
+  sound.play().catch((error) => {
+    console.log("Sound play failed: " + error);
+  });
+}

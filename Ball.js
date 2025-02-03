@@ -5,6 +5,7 @@ export class Ball {
     this.y = y;
   }
   drawBall(ctx) {
+   
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.ballRadius, 0, Math.PI * 2);
     ctx.fillStyle = "#0095DD";
