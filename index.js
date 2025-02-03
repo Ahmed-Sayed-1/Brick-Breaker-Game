@@ -1,4 +1,4 @@
-import { initializeContainers } from "./script.js";
+import { initializeContainers } from "./initializeContainers.js";
 import { Block } from "./Block.js";
 import { Ball } from "./Ball.js";
 import { Paddle } from "./Paddle.js";
@@ -116,8 +116,9 @@ function blockCollisions() {
       {
         block.cracked=true;
       }
+       if (block.visible > 0) {
         block.visible--;
-      
+      }
       removeBlock();
     }
   });
@@ -139,9 +140,9 @@ function draw() {
   block.drawBlocks(blocks, ctx);
   handleDirection();
   if (rightPressed && paddle.position < gameWidth - paddle.width) {
-    paddle.position += 7;
+    paddle.position += 15;
   } else if (leftPressed && paddle.position > 0) {
-    paddle.position -= 7;
+    paddle.position -= 15;
   }
 }
 
