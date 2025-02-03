@@ -18,7 +18,6 @@ export class Block {
 
   drawBlocks(blocks, ctx) {
     blocks.forEach(block => {
-      console.log(block.visible);
       if (block.visible && block.inLevel) {
         ctx.save();
         ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
