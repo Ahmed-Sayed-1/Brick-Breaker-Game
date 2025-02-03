@@ -14,10 +14,10 @@ let blocks = initializeContainers(gameWidth, blockWidth, blockHeight);
 document.addEventListener("mousemove", moveMouse);
 document.addEventListener("keydown", keyDownHandler);
 document.addEventListener("keyup", keyUpHandler);
-
+let speed = 3.0;
 export const gameHeight = canvas.height;
 console.log(gameHeight)
-const ball = new Ball(gameWidth / 2, gameHeight - 30, 7.5)
+const ball = new Ball(gameWidth / 2, gameHeight - 30,10)
 
 canvas.width = canvas.offsetWidth;
 canvas.height = canvas.offsetHeight;
@@ -84,7 +84,6 @@ function handleDirection() {
 
   blockCollisions();
 
-  let speed = 2;
   ball.x += xDirection * speed;
   ball.y += yDirection * speed;
 }
@@ -166,8 +165,9 @@ function keyUpHandler(e) {
     leftPressed = false;
   }
 }
-
-document.getElementById("runButton").addEventListener("click", function () {
+window.setDifficulty = function(level) {
+  document.getElementById("buttonContainer").remove();
+  speed = level;
   startGame();
   this.disabled = true;
-});
+};
