@@ -173,8 +173,7 @@ function keyUpHandler(e) {
   }
 }
 window.setDifficulty = function(level) {
-  //mainAudio.play();
-  //mainAudio.currentTime = 0; 
+
   document.getElementById("buttonContainer").remove();
   speed = level;
   startGame();
