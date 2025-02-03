@@ -11,7 +11,7 @@ export class Ball {
   drawBall(ctx) {
    
     ctx.beginPath();
-    ctx.drawImage(fireballImage,this.x, this.y, 60, 60);
+    ctx.drawImage(fireballImage,this.x, this.y, 40, 40);
     ctx.closePath();
   }
 }
