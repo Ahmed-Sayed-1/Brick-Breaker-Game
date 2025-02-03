@@ -8,7 +8,6 @@ export const ctx = canvas.getContext("2d");
 canvas.width = canvas.offsetWidth;  
 canvas.height = canvas.offsetHeight;
 const gameWidth = canvas.width;
-console.log(gameWidth);
 export const blockWidth = 100; 
 export const blockHeight = 50;
 let blocks = initializeContainers(gameWidth, blockWidth, blockHeight);
@@ -17,7 +16,7 @@ document.addEventListener("keydown", keyDownHandler);
 document.addEventListener("keyup", keyUpHandler);
 let speed = 3.0;
 export const gameHeight = canvas.height;
-console.log(gameHeight)
+
 const ball = new Ball(gameWidth / 2, gameHeight - 30,10)
 
 canvas.width = canvas.offsetWidth;
@@ -25,7 +24,6 @@ canvas.height = canvas.offsetHeight;
 
 const block = new Block();
 
-console.log(blocks);
 const gameBorder = {
   left: 0,
   bottom: 0,
