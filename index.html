@@ -1,24 +1,27 @@
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Brick-Breaker Game</title>
-    <link rel="stylesheet" href="style.css"> 
-    <link rel="icon" type="image/png" href="/assets/images/brick-breaker.png">
-    <audio src="/assets/sounds/pharaohx27s-ode-293516.mp3"loop hidden id="main-audio"></audio>
-    <audio id="hit-sound" src="/assets/sounds/bricks-104933.mp3" preload="auto"></audio>
-  </head>
-  <body>
-    <div class="game-container">
-      <canvas id="myCanvas" class="game-canvas"></canvas>
-    </div>
-    <div class="btn-container" id="buttonContainer">
-      <button class="btn easy" onclick="setDifficulty(5)">Easy</button>
-      <button class="btn medium" onclick="setDifficulty(7)">Medium</button>
-      <button class="btn hard" onclick="setDifficulty(9)">Hard</button>
-    </div>
-    
-    <script src="index.js" type="module"></script>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Brick-Breaker Game</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="/assets/images/brick-breaker.png">
+  <audio src="/assets/sounds/pharaohx27s-ode-293516.mp3" loop hidden id="main-audio"></audio>
+  <audio id="hit-sound" src="/assets/sounds/bricks-104933.mp3" preload="auto"></audio>
+</head>
+
+<body>
+  <div class="game-container">
+    <canvas id="myCanvas" class="game-canvas"></canvas>
+  </div>
+  <div class="btn-container" id="buttonContainer">
+    <button class="btn easy" onclick="setDifficulty(5,this); createScoreAndLives()">Easy</button>
+    <button class="btn medium" onclick="setDifficulty(7,this); createScoreAndLives()">Medium</button>
+    <button class="btn hard" onclick="setDifficulty(9,this); createScoreAndLives()">Hard</button>
+  </div>
+
+  <script src="index.js" type="module"></script>
 
 </body>
+
 </html>

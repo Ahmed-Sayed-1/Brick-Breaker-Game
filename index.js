@@ -2,13 +2,13 @@ import { initializeContainers } from "./initializeContainers.js";
 import { Block } from "./Block.js";
 import { Ball } from "./Ball.js";
 import { Paddle } from "./Paddle.js";
-const canvas = document.querySelector('.game-canvas');
+const canvas = document.querySelector(".game-canvas");
 const hitSound = document.getElementById("hit-sound");
 export const ctx = canvas.getContext("2d");
-canvas.width = canvas.offsetWidth;  
+canvas.width = canvas.offsetWidth;
 canvas.height = canvas.offsetHeight;
 const gameWidth = canvas.width;
-export const blockWidth = 100; 
+export const blockWidth = 100;
 export const blockHeight = 50;
 let blocks = initializeContainers(gameWidth, blockWidth, blockHeight);
 document.addEventListener("mousemove", moveMouse);
@@ -17,7 +17,7 @@ document.addEventListener("keyup", keyUpHandler);
 let speed = 3.0;
 export const gameHeight = canvas.height;
 
-const ball = new Ball(gameWidth / 2, gameHeight - 30,10)
+const ball = new Ball(gameWidth / 2, gameHeight - 30, 10);
 
 canvas.width = canvas.offsetWidth;
 canvas.height = canvas.offsetHeight;
@@ -110,11 +110,10 @@ function blockCollisions() {
       if (hitFromTop || hitFromBottom) {
         yDirection = -yDirection;
       }
-      if (!block.cracked)
-      {
-        block.cracked=true;
+      if (!block.cracked) {
+        block.cracked = true;
       }
-       if (block.visible > 0) {
+      if (block.visible > 0) {
         block.visible--;
       }
       removeBlock();
@@ -128,8 +127,6 @@ function removeBlock() {
     }
   }
 }
-
-
 
 function draw() {
   ctx.clearRect(0, 0, gameWidth, gameHeight);
@@ -147,8 +144,8 @@ function draw() {
 const mainAudio = document.getElementById("main-audio");
 function startGame() {
   mainAudio.play();
-  mainAudio.currentTime = 0;  
-  function gameLoop() { 
+  mainAudio.currentTime = 0;
+  function gameLoop() {
     draw();
     requestAnimationFrame(gameLoop);
   }
@@ -170,17 +167,17 @@ function keyUpHandler(e) {
     leftPressed = false;
   }
 }
-window.setDifficulty = function(level) {
-
+window.setDifficulty = function (level, btn) {
   document.getElementById("buttonContainer").remove();
   speed = level;
   startGame();
-  this.disabled = true;
-
+  btn.disabled = true;
 };
-window.onload = function() {
+window.onload = function () {
   mainAudio.play().catch((error) => {
-    console.log("Audio play blocked. Please interact with the page to allow audio.");
+    console.log(
+      "Audio play blocked. Please interact with the page to allow audio."
+    );
   });
 };
 
@@ -189,3 +186,17 @@ function playSound(sound) {
     console.log("Sound play failed: " + error);
   });
 }
+
+window.createScoreAndLives = function () {
+  const statusContainer = document.createElement("div");
+  statusContainer.classList.add("status-container");
+  const score = document.createElement("div");
+  score.classList.add("score");
+  score.innerHTML = "Score: <span id='score'>0</span>";
+  statusContainer.appendChild(score);
+  const lives = document.createElement("div");
+  lives.classList.add("lives");
+  lives.innerHTML = "Lives: <span id='lives'>3</span>";
+  statusContainer.appendChild(lives);
+  document.body.appendChild(statusContainer);
+};
