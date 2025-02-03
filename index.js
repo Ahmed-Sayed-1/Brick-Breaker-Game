@@ -138,7 +138,7 @@ function removeBlock() {
       countOfBroken++;
       console.log(countOfBroken);
     }
-    if (countOfBroken === 1) {
+    if (countOfBroken === 5) {
       const lives = document.getElementById("lives");
       lives.innerHTML = parseInt(lives.innerHTML) + 1;
       const result = document.querySelector(".status-container");
