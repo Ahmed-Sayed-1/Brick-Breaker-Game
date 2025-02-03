@@ -1,7 +1,7 @@
 export function initializeContainers(gameWidth, blockWidth, blockHeight) {
  
   let blocks = [];
-  const spacing = 10; 
+  const spacing = 30; 
   const colCount = Math.floor(gameWidth / (blockWidth + spacing));
   const rowCount = 5;
   let visibility;
@@ -10,7 +10,8 @@ export function initializeContainers(gameWidth, blockWidth, blockHeight) {
       if (Math.random() > 0.85) {
         visibility = -1;
       }
-      else {visibility =  2;
+      else {
+        visibility = 2;
         }
       let block ={  x: col * (blockWidth + spacing),
       y: row * (blockHeight + spacing),
