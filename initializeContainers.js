@@ -10,7 +10,6 @@ export function initializeContainers(gameWidth, blockWidth, blockHeight) {
   const verticalMargin = 0.1 * totalPageHeight;
   const verticalLimit = 0.7 * totalPageHeight;
   let visibility;
-
   for (let row = 0; row < randomRows; row++) {
     const randomI = Math.floor(Math.random() * randomHorizontal.length);
     const HorizontalMargin = randomHorizontal[randomI];

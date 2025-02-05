@@ -126,22 +126,18 @@ function blockCollisions() {
 
 function removeBlock(block) {
   const index = blocks.indexOf(block);
-  let counterOfRemoved = 0;
   if (index > -1) {
     blocks.splice(index, 1);
     increaseScore();
-    counterOfRemoved++;
+    winGame();
   }
-  if (counterOfRemoved == 1) {
-    //Math.random() < 0.2 20% percent to show and remove counter
+  if (Math.random() < 0.2) {
     increaseLives();
     const lives = document.getElementById("lives");
     if (heart.checkUserGetHeart(paddle)) {
       if (parseInt(lives.innerHTML) < 5) {
         lives.innerHTML = parseInt(lives.innerHTML) + 1;
       }
-    } else {
-      //heart.resetPosition(canvas);
     }
   }
 }
@@ -228,11 +224,16 @@ function increaseScore() {
 
 function decreaseLives() {
   const lives = document.getElementById("lives");
-  if (parseInt(lives.innerHTML) === 1) {
-    alert("Game Over!");
-    location.reload();
-  }
   lives.innerHTML = parseInt(lives.innerHTML) - 1;
+
+  if (parseInt(lives.innerHTML) === 0) {
+    xDirection = 0;
+    yDirection = 0;
+    document.removeEventListener("keydown", keyDownHandler);
+    document.removeEventListener("keyup", keyUpHandler);
+    document.removeEventListener("mousemove", moveMouse);
+    displayGameOver("Game Over!", false);
+  }
 }
 
 function resetBall() {
@@ -240,6 +241,10 @@ function resetBall() {
   ball.y = gameHeight - paddle.height - 10;
   xDirection = 1;
   yDirection = -1;
+  if (parseInt(lives.innerHTML) === 0) {
+    xDirection = 0;
+    yDirection = 0;
+  }
 }
 
 function increaseLives() {
@@ -251,6 +256,82 @@ function winGame() {
   blocks
     .filter((block) => block.visible !== -1)
     .map((block) => checkArray.push(block));
-  alert("You win!");
-  location.reload();
+  if (checkArray.length === 0) {
+    //Stop the ball movement and the remove event listeners
+    xDirection = 0;
+    yDirection = 0;
+    document.removeEventListener("keydown", keyDownHandler);
+    document.removeEventListener("keyup", keyUpHandler);
+    document.removeEventListener("mousemove", moveMouse);
+    displayGameOver("You Win!", true);
+  }
+}
+
+function displayGameOver(message, isWin) {
+  // Create overlay
+  const overlay = document.createElement("div");
+  overlay.style.position = "fixed";
+  overlay.style.top = "0";
+  overlay.style.left = "0";
+  overlay.style.width = "100%";
+  overlay.style.height = "100%";
+  overlay.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
+  overlay.style.zIndex = "1000";
+  overlay.style.display = "flex";
+  overlay.style.justifyContent = "center";
+  overlay.style.alignItems = "center";
+
+  // Create message box
+  const messageBox = document.createElement("div");
+  messageBox.style.backgroundColor = isWin ? "#4CAF50" : "#f44336";
+  messageBox.style.padding = "2rem";
+  messageBox.style.borderRadius = "10px";
+  messageBox.style.textAlign = "center";
+  messageBox.style.color = "white";
+
+  // Add content
+  messageBox.innerHTML = `
+    <h2>${message}</h2>
+    <button id="restart-btn" style="
+        padding: 10px 20px;
+        margin: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        background: white;
+        color: ${isWin ? "#4CAF50" : "#f44336"};
+      ">
+      Play Again
+    </button>
+  `;
+
+  // Add elements to DOM
+  overlay.appendChild(messageBox);
+  document.body.appendChild(overlay);
+
+  // Handle restart
+  document.getElementById("restart-btn").addEventListener("click", () => {
+    document.body.removeChild(overlay);
+    resetGame();
+  });
+}
+
+function resetGame() {
+  blocks = initializeContainers(gameWidth, blockWidth, blockHeight);
+
+  ball.x = gameWidth / 2;
+  ball.y = gameHeight - 30;
+
+  paddle.position = (gameWidth - paddle.width) / 2;
+
+  document.addEventListener("keydown", keyDownHandler);
+  document.addEventListener("keyup", keyUpHandler);
+  document.addEventListener("mousemove", moveMouse);
+  const scoreElement = document.getElementById("score");
+  const livesElement = document.getElementById("lives");
+  scoreElement.textContent = "0";
+  livesElement.textContent = "3";
+
+  xDirection = 1;
+  yDirection = -1;
 }
