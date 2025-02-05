@@ -14,7 +14,6 @@ export function initializeContainers(gameWidth, blockWidth, blockHeight) {
   for (let row = 0; row < randomRows; row++) {
     const randomI = Math.floor(Math.random() * randomHorizontal.length);
     const HorizontalMargin = randomHorizontal[randomI];
-    const rowOffset = Math.random() * 0.05 * gameWidth;
     const maxHeight = Math.min(
       verticalMargin + row * (blockHeight + spacing),
       verticalLimit

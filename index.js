@@ -2,6 +2,7 @@ import { initializeContainers } from "./initializeContainers.js";
 import { Block } from "./Block.js";
 import { Ball } from "./Ball.js";
 import { Paddle } from "./Paddle.js";
+import { Heart } from "./Heart.js";
 
 const canvas = document.querySelector(".game-canvas");
 const hitSound = document.getElementById("hit-sound");
@@ -30,8 +31,14 @@ const paddle = new Paddle(
   gameBorder.right * 0.15,
   (gameBorder.right - gameBorder.right * 0.15) / 2
 );
-const ball = new Ball(paddle.position + paddle.width / 2, gameHeight - paddle.height - 10, 20);
+const ball = new Ball(
+  paddle.position + paddle.width / 2,
+  gameHeight - paddle.height - 10,
+  20
+);
 const block = new Block();
+
+const heart = new Heart(Math.random * canvas.width - 30, 0, 30, 30);
 
 let xDirection = 1;
 let yDirection = -1;
@@ -119,9 +126,23 @@ function blockCollisions() {
 
 function removeBlock(block) {
   const index = blocks.indexOf(block);
+  let counterOfRemoved = 0;
   if (index > -1) {
     blocks.splice(index, 1);
     increaseScore();
+    counterOfRemoved++;
+  }
+  if (counterOfRemoved == 1) {
+    //Math.random() < 0.2 20% percent to show and remove counter
+    increaseLives();
+    const lives = document.getElementById("lives");
+    if (heart.checkUserGetHeart(paddle)) {
+      if (parseInt(lives.innerHTML) < 5) {
+        lives.innerHTML = parseInt(lives.innerHTML) + 1;
+      }
+    } else {
+      //heart.resetPosition(canvas);
+    }
   }
 }
 
@@ -219,4 +240,17 @@ function resetBall() {
   ball.y = gameHeight - paddle.height - 10;
   xDirection = 1;
   yDirection = -1;
+}
+
+function increaseLives() {
+  heart.draw(ctx);
+}
+
+function winGame() {
+  const checkArray = [];
+  blocks
+    .filter((block) => block.visible !== -1)
+    .map((block) => checkArray.push(block));
+  alert("You win!");
+  location.reload();
 }
