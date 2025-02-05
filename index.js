@@ -195,7 +195,7 @@ function keyUpHandler(e) {
   }
 }
 window.setDifficulty = function (level, btn) {
-  document.getElementById("buttonContainer").remove();
+  document.getElementById("menu-container").remove();
   speed = level;
   startGame();
   btn.disabled = true;
