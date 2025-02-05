@@ -20,11 +20,7 @@ export function initializeContainers(gameWidth, blockWidth, blockHeight) {
       verticalLimit
     );
     for (let col = 0; col < colCount; col++) {
-      if (Math.random() > 0.85) {
-        visibility = -1;
-      } else {
-        visibility = 2;
-      }
+      visibility = Math.random() > 0.85 ? -1 : 2;
       let block = {
         x: HorizontalMargin + col * (blockWidth + spacing),
         y: maxHeight,
