@@ -31,14 +31,9 @@ const paddle = new Paddle(
   gameBorder.right * 0.15,
   (gameBorder.right - gameBorder.right * 0.15) / 2
 );
-const ball = new Ball(
-  paddle.position + paddle.width / 2,
-  gameHeight - paddle.height - 10,
-  20
-);
+const ball = new Ball(paddle.position + paddle.width / 2, gameHeight - paddle.height - 10, 20);
 const block = new Block();
-
-const heart = new Heart(Math.random * canvas.width - 30, 0, 30, 30);
+let heart = null;
 
 let xDirection = 1;
 let yDirection = -1;
@@ -107,6 +102,8 @@ function blockCollisions() {
       ball.y - ball.ballRadius < block.y + Block.blockHeight
     ) {
       playSound(hitSound);
+
+      // Simplified collision response
       if (ball.x < block.x || ball.x > block.x + Block.blockWidth) {
         xDirection = -xDirection;
       } else {
@@ -118,6 +115,9 @@ function blockCollisions() {
         block.cracked = true;
       }
       if (block.visible === 0) {
+        if (Math.random() < 0.2) { // 20% chance to drop a heart
+          heart = new Heart(block.x + block.width / 2, block.y);
+        }
         removeBlock(block);
       }
     }
@@ -129,6 +129,7 @@ function removeBlock(block) {
   if (index > -1) {
     blocks.splice(index, 1);
     increaseScore();
+<<<<<<< HEAD
     winGame();
   }
   if (Math.random() < 0.2) {
@@ -139,6 +140,8 @@ function removeBlock(block) {
         lives.innerHTML = parseInt(lives.innerHTML) + 1;
       }
     }
+=======
+>>>>>>> bb947b327418f9d1ff02ba7687db4a4b263bad24
   }
 }
 
@@ -147,6 +150,16 @@ function draw() {
   ball.drawBall(ctx);
   paddle.drawPaddle(ctx);
   block.drawBlocks(blocks, ctx);
+  if (heart) {
+    heart.draw(ctx);
+    heart.increaseSpeed();
+    if (heart.checkUserGetHeart(paddle, gameHeight)) {
+      increaseLives();
+      heart = null;
+    } else if (heart.y > gameHeight) {
+      heart = null;
+    }
+  }
   handleDirection();
   if (rightPressed && paddle.position < gameWidth - paddle.width) {
     paddle.position += 15;
@@ -183,7 +196,7 @@ function keyUpHandler(e) {
 }
 
 window.setDifficulty = function (level, btn) {
-  document.getElementById("buttonContainer").remove();
+  document.getElementById("menu-container").remove();
   speed = level;
   startGame();
   btn.disabled = true;
@@ -248,6 +261,7 @@ function resetBall() {
 }
 
 function increaseLives() {
+<<<<<<< HEAD
   heart.draw(ctx);
 }
 
@@ -335,3 +349,11 @@ function resetGame() {
   xDirection = 1;
   yDirection = -1;
 }
+=======
+  const lives = document.getElementById("lives");
+  const currentLives = parseInt(lives.innerHTML);
+  if (currentLives < 5) {
+    lives.innerHTML = currentLives + 1;
+  }
+}
+>>>>>>> bb947b327418f9d1ff02ba7687db4a4b263bad24
