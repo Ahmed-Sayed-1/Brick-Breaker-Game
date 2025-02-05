@@ -2,6 +2,8 @@ import { initializeContainers } from "./initializeContainers.js";
 import { Block } from "./Block.js";
 import { Ball } from "./Ball.js";
 import { Paddle } from "./Paddle.js";
+import { Heart } from "./Heart.js";
+
 const canvas = document.querySelector(".game-canvas");
 const hitSound = document.getElementById("hit-sound");
 export const ctx = canvas.getContext("2d");
@@ -17,13 +19,6 @@ document.addEventListener("keyup", keyUpHandler);
 let speed = 3.0;
 export const gameHeight = canvas.height;
 
-const ball = new Ball(gameWidth / 2, gameHeight - 30, 10);
-
-canvas.width = canvas.offsetWidth;
-canvas.height = canvas.offsetHeight;
-
-const block = new Block();
-
 const gameBorder = {
   left: 0,
   bottom: 0,
@@ -36,6 +31,10 @@ const paddle = new Paddle(
   gameBorder.right * 0.15,
   (gameBorder.right - gameBorder.right * 0.15) / 2
 );
+const ball = new Ball(paddle.position + paddle.width / 2, gameHeight - paddle.height - 10, 20);
+const block = new Block();
+let heart = null;
+
 let xDirection = 1;
 let yDirection = -1;
 let rightPressed = false;
@@ -84,10 +83,7 @@ function handleDirection() {
   if (ball.y + ball.ballRadius > canvas.height) {
     ball.y = gameHeight - ball.ballRadius;
     decreaseLives();
-    ball.x = gameWidth / 2;
-    ball.y = gameHeight - 30;
-    xDirection = 1;
-    yDirection = -1;
+    resetBall();
   }
 
   blockCollisions();
@@ -97,7 +93,6 @@ function handleDirection() {
 }
 
 function blockCollisions() {
-  //
   blocks.forEach((block) => {
     if (
       block.visible &&
@@ -107,51 +102,33 @@ function blockCollisions() {
       ball.y - ball.ballRadius < block.y + Block.blockHeight
     ) {
       playSound(hitSound);
-      let hitFromLeft = ball.x - ball.ballRadius < block.x;
-      let hitFromRight = ball.x + ball.ballRadius > block.x + Block.blockWidth;
-      let hitFromTop = ball.y - ball.ballRadius < block.y;
-      let hitFromBottom =
-        ball.y + ball.ballRadius > block.y + Block.blockHeight;
 
-      if (hitFromLeft || hitFromRight) {
+      // Simplified collision response
+      if (ball.x < block.x || ball.x > block.x + Block.blockWidth) {
         xDirection = -xDirection;
-      }
-      if (hitFromTop || hitFromBottom) {
+      } else {
         yDirection = -yDirection;
       }
-      if (!block.cracked) {
-        block.cracked = true;
-      }
+
       if (block.visible > 0) {
         block.visible--;
+        block.cracked = true;
       }
-      removeBlock();
+      if (block.visible === 0) {
+        if (Math.random() < 0.2) { // 20% chance to drop a heart
+          heart = new Heart(block.x + block.width / 2, block.y);
+        }
+        removeBlock(block);
+      }
     }
   });
 }
-let countOfBroken = 0;
-function removeBlock() {
-  for (let i = blocks.length - 1; i >= 0; i--) {
-    if (blocks[i].visible == 0) {
-      blocks.splice(i, 1);
-      increaseScore();
-      countOfBroken++;
-      console.log(countOfBroken);
-    }
-    if (countOfBroken === 5) {
-      const lives = document.getElementById("lives");
-      lives.innerHTML = parseInt(lives.innerHTML) + 1;
-      const result = document.querySelector(".status-container");
-      const congratulationDiv = document.createElement("div");
-      congratulationDiv.classList.add("congratulation");
-      congratulationDiv.innerHTML =
-        "Congratulations! You have earned an extra life!";
-      result.appendChild(congratulationDiv);
-      setTimeout(() => {
-        result.removeChild(congratulationDiv);
-      }, 3000);
-      countOfBroken = 0;
-    }
+
+function removeBlock(block) {
+  const index = blocks.indexOf(block);
+  if (index > -1) {
+    blocks.splice(index, 1);
+    increaseScore();
   }
 }
 
@@ -160,6 +137,16 @@ function draw() {
   ball.drawBall(ctx);
   paddle.drawPaddle(ctx);
   block.drawBlocks(blocks, ctx);
+  if (heart) {
+    heart.draw(ctx);
+    heart.increaseSpeed();
+    if (heart.checkUserGetHeart(paddle, gameHeight)) {
+      increaseLives();
+      heart = null;
+    } else if (heart.y > gameHeight) {
+      heart = null;
+    }
+  }
   handleDirection();
   if (rightPressed && paddle.position < gameWidth - paddle.width) {
     paddle.position += 15;
@@ -194,12 +181,14 @@ function keyUpHandler(e) {
     leftPressed = false;
   }
 }
+
 window.setDifficulty = function (level, btn) {
   document.getElementById("menu-container").remove();
   speed = level;
   startGame();
   btn.disabled = true;
 };
+
 window.onload = function () {
   mainAudio.play().catch((error) => {
     console.log(
@@ -240,4 +229,19 @@ function decreaseLives() {
     location.reload();
   }
   lives.innerHTML = parseInt(lives.innerHTML) - 1;
+}
+
+function resetBall() {
+  ball.x = paddle.position + paddle.width / 2;
+  ball.y = gameHeight - paddle.height - 10;
+  xDirection = 1;
+  yDirection = -1;
+}
+
+function increaseLives() {
+  const lives = document.getElementById("lives");
+  const currentLives = parseInt(lives.innerHTML);
+  if (currentLives < 5) {
+    lives.innerHTML = currentLives + 1;
+  }
 }

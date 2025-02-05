@@ -14,6 +14,7 @@ export class Block {
     this.x = x;
     this.y = y;
     this.visible = 2;
+    this.cracked = false;
   }
 
   drawBlocks(blocks, ctx) {
@@ -58,23 +59,5 @@ export class Block {
         ctx.restore();
       }
     });
-  }
-
-  drawCrackedBlock(block) {
-    ctx.save();
-    ctx.shadowColor = "rgba(0, 0, 0, 1)";
-    ctx.shadowBlur = 30;
-    ctx.shadowOffsetX = 10;
-    ctx.shadowOffsetY = 10;
-    ctx.beginPath();
-    ctx.drawImage(
-      crackedBlockImage,
-      block.x,
-      block.y,
-      block.width,
-      block.height
-    );
-    ctx.closePath();
-    ctx.restore();
   }
 }
