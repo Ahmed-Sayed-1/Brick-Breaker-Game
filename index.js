@@ -31,14 +31,9 @@ const paddle = new Paddle(
   gameBorder.right * 0.15,
   (gameBorder.right - gameBorder.right * 0.15) / 2
 );
-const ball = new Ball(
-  paddle.position + paddle.width / 2,
-  gameHeight - paddle.height - 10,
-  20
-);
+const ball = new Ball(paddle.position + paddle.width / 2, gameHeight - paddle.height - 10, 20);
 const block = new Block();
-
-const heart = new Heart(Math.random * canvas.width - 30, 0, 30, 30);
+let heart = null;
 
 let xDirection = 1;
 let yDirection = -1;
@@ -107,6 +102,8 @@ function blockCollisions() {
       ball.y - ball.ballRadius < block.y + Block.blockHeight
     ) {
       playSound(hitSound);
+
+      // Simplified collision response
       if (ball.x < block.x || ball.x > block.x + Block.blockWidth) {
         xDirection = -xDirection;
       } else {
@@ -118,6 +115,9 @@ function blockCollisions() {
         block.cracked = true;
       }
       if (block.visible === 0) {
+        if (Math.random() < 0.2) { // 20% chance to drop a heart
+          heart = new Heart(block.x + block.width / 2, block.y);
+        }
         removeBlock(block);
       }
     }
@@ -126,23 +126,9 @@ function blockCollisions() {
 
 function removeBlock(block) {
   const index = blocks.indexOf(block);
-  let counterOfRemoved = 0;
   if (index > -1) {
     blocks.splice(index, 1);
     increaseScore();
-    counterOfRemoved++;
-  }
-  if (counterOfRemoved == 1) {
-    //Math.random() < 0.2 20% percent to show and remove counter
-    increaseLives();
-    const lives = document.getElementById("lives");
-    if (heart.checkUserGetHeart(paddle)) {
-      if (parseInt(lives.innerHTML) < 5) {
-        lives.innerHTML = parseInt(lives.innerHTML) + 1;
-      }
-    } else {
-      //heart.resetPosition(canvas);
-    }
   }
 }
 
@@ -151,6 +137,16 @@ function draw() {
   ball.drawBall(ctx);
   paddle.drawPaddle(ctx);
   block.drawBlocks(blocks, ctx);
+  if (heart) {
+    heart.draw(ctx);
+    heart.increaseSpeed();
+    if (heart.checkUserGetHeart(paddle, gameHeight)) {
+      increaseLives();
+      heart = null;
+    } else if (heart.y > gameHeight) {
+      heart = null;
+    }
+  }
   handleDirection();
   if (rightPressed && paddle.position < gameWidth - paddle.width) {
     paddle.position += 15;
@@ -243,14 +239,9 @@ function resetBall() {
 }
 
 function increaseLives() {
-  heart.draw(ctx);
-}
-
-function winGame() {
-  const checkArray = [];
-  blocks
-    .filter((block) => block.visible !== -1)
-    .map((block) => checkArray.push(block));
-  alert("You win!");
-  location.reload();
+  const lives = document.getElementById("lives");
+  const currentLives = parseInt(lives.innerHTML);
+  if (currentLives < 5) {
+    lives.innerHTML = currentLives + 1;
+  }
 }

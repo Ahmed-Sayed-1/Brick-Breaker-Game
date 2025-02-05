@@ -19,12 +19,12 @@ export class Heart {
     this.y += 5;
   }
 
-  checkUserGetHeart(paddle) {
+  checkUserGetHeart(paddle, gameHeight) {
     if (
       this.visible &&
-      this.y + this.height >= paddle.y &&
-      this.x + this.width >= paddle.x &&
-      this.x <= paddle.x + paddle.width
+      this.y + this.height >= gameHeight - paddle.height &&
+      this.x + this.width >= paddle.position &&
+      this.x <= paddle.position + paddle.width
     ) {
       this.visible = false;
       return true;
